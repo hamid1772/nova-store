@@ -1,98 +1,714 @@
-import React, { useMemo, useState, useEffect } from 'react';
-import { createRoot } from 'react-dom/client';
+import React, { useState, useEffect } from "react";
+import { createRoot } from "react-dom/client";
 import {
-  FiSearch, FiX, FiShoppingCart, FiHeart, FiGrid, FiMusic, FiMousePointer,
-  FiHardDrive, FiCamera, FiPlay, FiMonitor, FiHeadphones, FiVolume2,
-  FiVideo, FiSmartphone, FiSun, FiMoon,
-  FiArrowLeft, FiArrowRight, FiPlus, FiMinus, FiStar, FiShield, FiTruck,
-  FiRefreshCw, FiCheckCircle, FiMail, FiUser, FiBox
-} from 'react-icons/fi';
-import './styles.css';
-import { MdKeyboard } from 'react-icons/md';
+  FaSearch,
+  FaShoppingCart,
+  FaHeart,
+  FaSun,
+  FaMoon,
+  FaTimes,
+  FaPlus,
+  FaMinus,
+  FaTrash,
+  FaStar,
+  FaArrowLeft,
+  FaHeadphones,
+  FaKeyboard,
+  FaGamepad,
+  FaMouse,
+  FaLaptop,
+  FaCamera,
+  FaMobileAlt,
+  FaBolt,
+  FaShieldAlt,
+  FaTruck,
+} from "react-icons/fa";
 
-
-// محصولات نمونه فروشگاه؛ برای افزودن محصول، یک مورد به این آرایه اضافه کنید.
+// ==============================
+// محصولات فروشگاه
+// ==============================
 const products = [
-  { id: 1, name: 'هدفون بی‌سیم', category: 'audio', categoryName: 'صوتی', price: 1850000, icon: FiHeadphones, description: 'صدای شفاف و باتری قدرتمند', tag: 'پرفروش', rating: 4.8 },
-  { id: 2, name: 'اسپیکر بلوتوثی', category: 'audio', categoryName: 'صوتی', price: 1250000, icon: FiVolume2, description: 'صدای پرقدرت در ابعاد کوچک', tag: 'جدید', rating: 4.7 },
-  { id: 3, name: 'ماوس بی‌سیم', category: 'accessory', categoryName: 'لوازم جانبی', price: 650000, icon: FiMousePointer, description: 'طراحی ارگونومیک و دقیق', tag: 'پیشنهاد', rating: 4.6 },
-  { id: 4, name: 'کیبورد مکانیکی', category: 'accessory', categoryName: 'لوازم جانبی', price: 2100000, icon: MdKeyboard, description: 'کلیدهای نرم و نورپردازی جذاب', tag: 'ویژه', rating: 4.6 },
-  { id: 5, name: 'فلش USB', category: 'storage', categoryName: 'ذخیره‌سازی', price: 390000, icon: FiHardDrive, description: 'حافظه قابل حمل برای فایل‌ها', tag: '', rating: 4.5 },
-  { id: 6, name: 'وب‌کم HD', category: 'camera', categoryName: 'تصویری', price: 990000, icon: FiVideo, description: 'تصویر واضح برای جلسات آنلاین', tag: 'محبوب', rating: 4.4 },
-  { id: 7, name: 'گیم‌پد', category: 'gaming', categoryName: 'گیمینگ', price: 1450000, icon: FiPlay, description: 'کنترل راحت برای بازی‌های روز', tag: '', rating: 4.7 },
-  { id: 8, name: 'پایه لپ‌تاپ', category: 'accessory', categoryName: 'لوازم جانبی', price: 720000, icon: FiMonitor, description: 'بهبود زاویه دید و گردش هوا', tag: '', rating: 4.3 },
+  {
+    id: 1,
+    name: "هدفون بی‌سیم Sonic Pro",
+    category: "audio",
+    price: 1850000,
+    oldPrice: 2200000,
+    icon: "headphones",
+    color: "#e9e4ff",
+    badge: "پرفروش",
+    rating: 4.8,
+    description: "صدای شفاف، طراحی راحت و باتری قدرتمند",
+  },
+  {
+    id: 2,
+    name: "کیبورد مکانیکی RGB",
+    category: "accessories",
+    price: 2100000,
+    oldPrice: 2500000,
+    icon: "keyboard",
+    color: "#e0f3ff",
+    badge: "ویژه",
+    rating: 4.7,
+    description: "تجربه تایپ حرفه‌ای با نورپردازی جذاب",
+  },
+  {
+    id: 3,
+    name: "دسته بازی Pro Controller",
+    category: "gaming",
+    price: 1450000,
+    oldPrice: null,
+    icon: "gamepad",
+    color: "#ffe8d8",
+    badge: "جدید",
+    rating: 4.6,
+    description: "کنترل دقیق و طراحی ارگونومیک برای بازی",
+  },
+  {
+    id: 4,
+    name: "ماوس بی‌سیم Ultra",
+    category: "accessories",
+    price: 850000,
+    oldPrice: 990000,
+    icon: "mouse",
+    color: "#e0f5e9",
+    badge: "",
+    rating: 4.5,
+    description: "سبک، سریع و مناسب کار و بازی",
+  },
+  {
+    id: 5,
+    name: "لپ‌تاپ NovaBook Air",
+    category: "digital",
+    price: 32500000,
+    oldPrice: 35000000,
+    icon: "laptop",
+    color: "#f0e5ff",
+    badge: "پیشنهاد",
+    rating: 4.9,
+    description: "قدرت و سرعت در طراحی سبک و مدرن",
+  },
+  {
+    id: 6,
+    name: "وب‌کم Full HD",
+    category: "digital",
+    price: 2350000,
+    oldPrice: null,
+    icon: "camera",
+    color: "#fff1d9",
+    badge: "",
+    rating: 4.4,
+    description: "تصویر واضح برای جلسات و استریم",
+  },
+  {
+    id: 7,
+    name: "هندزفری Air Sound",
+    category: "audio",
+    price: 1250000,
+    oldPrice: 1500000,
+    icon: "headphones",
+    color: "#ffe4ef",
+    badge: "تخفیف",
+    rating: 4.6,
+    description: "صدای باکیفیت در ابعاد کوچک و سبک",
+  },
+  {
+    id: 8,
+    name: "پایه خنک‌کننده لپ‌تاپ",
+    category: "accessories",
+    price: 980000,
+    oldPrice: null,
+    icon: "laptop",
+    color: "#dff5f5",
+    badge: "",
+    rating: 4.3,
+    description: "بهبود جریان هوا و کاهش دمای دستگاه",
+  },
 ];
-const categories = [
-  { id: 'all', name: 'همه محصولات', icon: FiGrid }, { id: 'audio', name: 'صوتی', icon: FiMusic },
-  { id: 'accessory', name: 'لوازم جانبی', icon: FiMousePointer }, { id: 'storage', name: 'ذخیره‌سازی', icon: FiHardDrive },
-  { id: 'camera', name: 'تصویری', icon: FiCamera }, { id: 'gaming', name: 'گیمینگ', icon: FiPlay },
-];
-const banners = [
-  { eyebrow: 'انتخاب هوشمندانه، خرید آسان', title: <>تکنولوژی، همیشه<br />در دسترس شما!</>, subtitle: 'محصولات منتخب دیجیتال با کیفیت و قیمت مناسب', action: 'مشاهده محصولات', style: 'banner-purple', art: [FiMonitor, FiSmartphone, FiHeadphones] },
-  { eyebrow: 'تجربه‌ای متفاوت از صدا', title: <>صدایی واضح؛<br />لحظاتی ماندگار</>, subtitle: 'هدفون و اسپیکرهای منتخب برای موسیقی و سرگرمی', action: 'محصولات صوتی', style: 'banner-blue', art: [FiHeadphones, FiVolume2, FiMusic] },
-  { eyebrow: 'لوازم جانبی کاربردی', title: <>همه‌چیز برای<br />فضای کار بهتر</>, subtitle: 'ابزارهای کاربردی برای میز کار و استفاده روزمره', action: 'دیدن لوازم جانبی', style: 'banner-orange', art: [FiCommand, FiMousePointer, FiHardDrive] },
-];
-const formatPrice = (price) => new Intl.NumberFormat('fa-IR').format(price);
 
-function App() {
-  const [query, setQuery] = useState('');
-  const [category, setCategory] = useState('all');
-  const [sort, setSort] = useState('popular');
-  const [cart, setCart] = useState(() => { try { return JSON.parse(localStorage.getItem('nova-cart') || '{}'); } catch { return {}; } });
-  const [notice, setNotice] = useState('');
-  const [cartOpen, setCartOpen] = useState(false);
-  const [bannerIndex, setBannerIndex] = useState(0);
-  const [theme, setTheme] = useState(() => localStorage.getItem('nova-theme') || 'light');
+// ==============================
+// ابزارهای کمکی
+// ==============================
+const formatPrice = (price) =>
+  price.toLocaleString("fa-IR") + " تومان";
 
-  useEffect(() => { localStorage.setItem('nova-cart', JSON.stringify(cart)); }, [cart]);
-  useEffect(() => { localStorage.setItem('nova-theme', theme); document.documentElement.dataset.theme = theme; }, [theme]);
+const iconMap = {
+  headphones: FaHeadphones,
+  keyboard: FaKeyboard,
+  gamepad: FaGamepad,
+  mouse: FaMouse,
+  laptop: FaLaptop,
+  camera: FaCamera,
+  mobile: FaMobileAlt,
+};
 
-  const filteredProducts = useMemo(() => {
-    let list = products.filter((p) => (category === 'all' || p.category === category) &&
-      (p.name.toLowerCase().includes(query.trim().toLowerCase()) || p.categoryName.includes(query.trim())));
-    if (sort === 'price-low') list = [...list].sort((a, b) => a.price - b.price);
-    if (sort === 'price-high') list = [...list].sort((a, b) => b.price - a.price);
-    if (sort === 'name') list = [...list].sort((a, b) => a.name.localeCompare(b.name, 'fa'));
-    return list;
-  }, [query, category, sort]);
+// ==============================
+// استایل‌های داخلی صفحه
+// ==============================
+const css = `
+* { box-sizing: border-box; }
+body { margin: 0; font-family: Tahoma, Arial, sans-serif; }
+button, input, select { font: inherit; }
+button { cursor: pointer; }
 
-  const cartCount = Object.values(cart).reduce((sum, quantity) => sum + quantity, 0);
-  const cartTotal = products.reduce((sum, p) => sum + p.price * (cart[p.id] || 0), 0);
-  const showNotice = (message) => { setNotice(message); window.setTimeout(() => setNotice(''), 2200); };
-  const addToCart = (product) => { setCart((current) => ({ ...current, [product.id]: (current[product.id] || 0) + 1 })); showNotice(`${product.name} به سبد خرید اضافه شد`); };
-  const updateQuantity = (id, delta) => setCart((current) => { const next = { ...current, [id]: Math.max(0, (current[id] || 0) + delta) }; if (next[id] === 0) delete next[id]; return next; });
-  const activeBanner = banners[bannerIndex];
-  const BannerMainIcon = activeBanner.art[0];
-  const BannerSmallIcon = activeBanner.art[1];
-  const BannerMiniIcon = activeBanner.art[2];
-
-  return <div className="app-shell">
-    <div className="top-strip"><span><FiTruck /> ارسال سریع به سراسر کشور</span><span>پشتیبانی ۲۴ ساعته: ۰۲۱-۱۲۳۴۵۶۷</span><span><FiShield /> خرید امن و آسان</span></div>
-    <header className="site-header">
-      <a className="brand" href="#home" aria-label="Nova Store صفحه اصلی"><span className="brand-mark"><FiBox /></span><span><strong>Nova Store</strong><small>فروشگاه محصولات دیجیتال</small></span></a>
-      <label className="search-box"><FiSearch /><input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="جستجو در محصولات..." aria-label="جستجوی محصولات" /><button onClick={() => setQuery('')} aria-label="پاک کردن جستجو"><FiX /></button></label>
-      <div className="header-actions"><button className="theme-toggle" onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')} aria-label={theme === 'light' ? 'فعال کردن حالت شب' : 'فعال کردن حالت روز'} title={theme === 'light' ? 'حالت شب' : 'حالت روز'}>{theme === 'light' ? <FiMoon /> : <FiSun />}<span>{theme === 'light' ? 'حالت شب' : 'حالت روز'}</span></button><button className="login-button"><FiUser /> ورود / ثبت‌نام</button><button className="cart-button" onClick={() => setCartOpen(true)} aria-label="نمایش سبد خرید"><FiShoppingCart /> سبد خرید <span className="cart-count">{cartCount.toLocaleString('fa-IR')}</span></button></div>
-    </header>
-    <nav className="nav-row" aria-label="منوی اصلی"><a className="active" href="#home">صفحه اصلی</a><a href="#products">محصولات</a><a href="#categories">دسته‌بندی‌ها</a><a href="#about">درباره ما</a><a href="#footer">تماس با ما</a></nav>
-
-    <main id="home">
-      <section className={`hero-banner ${activeBanner.style}`} key={bannerIndex}>
-        <div className="hero-copy"><span className="hero-kicker">{activeBanner.eyebrow}</span><h1>{activeBanner.title}</h1><p>{activeBanner.subtitle}</p><a href="#products" className="primary-link" onClick={() => { if (bannerIndex === 1) setCategory('audio'); if (bannerIndex === 2) setCategory('accessory'); }}>{activeBanner.action} <FiArrowLeft /></a></div>
-        <div className="hero-art" aria-hidden="true"><span className="art-glow"></span><div className="banner-art-main"><BannerMainIcon /></div><div className="banner-art-small"><BannerSmallIcon /></div><div className="banner-art-mini"><BannerMiniIcon /></div><div className="banner-art-orbit"></div></div>
-        <button className="banner-arrow banner-next" onClick={() => setBannerIndex((i) => (i + 1) % banners.length)} aria-label="بنر بعدی"><FiArrowRight /></button><button className="banner-arrow banner-prev" onClick={() => setBannerIndex((i) => (i + banners.length - 1) % banners.length)} aria-label="بنر قبلی"><FiArrowLeft /></button>
-        <div className="hero-dots" aria-label="انتخاب بنر">{banners.map((b, i) => <button key={i} className={i === bannerIndex ? 'selected' : ''} onClick={() => setBannerIndex(i)} aria-label={`بنر ${i + 1}`} />)}</div>
-      </section>
-
-      <section className="category-section" id="categories"><div className="section-heading"><h2>دسته‌بندی محصولات</h2><p>محصول مورد نظرت را سریع پیدا کن</p></div><div className="category-list">{categories.slice(1).map((c) => { const Icon = c.icon; return <button key={c.id} className={`category-tile ${category === c.id ? 'chosen' : ''}`} onClick={() => setCategory(c.id)}><Icon className="category-icon" /><span>{c.name}</span></button>; })}</div></section>
-      <section className="products-section" id="products"><div className="products-title"><div><h2>محصولات فروشگاه</h2><p>{filteredProducts.length.toLocaleString('fa-IR')} محصول برای انتخاب شما</p></div><div className="product-controls"><button className={`clear-filter ${category !== 'all' ? 'visible' : ''}`} onClick={() => setCategory('all')}>حذف فیلتر</button><select value={sort} onChange={(e) => setSort(e.target.value)} aria-label="مرتب‌سازی"><option value="popular">پیشنهاد فروشگاه</option><option value="price-low">ارزان‌ترین</option><option value="price-high">گران‌ترین</option><option value="name">نام محصول</option></select></div></div>
-        <div className="category-pills">{categories.map((c) => <button key={c.id} className={category === c.id ? 'pill-active' : ''} onClick={() => setCategory(c.id)}>{c.name}</button>)}</div>
-        {filteredProducts.length ? <div className="product-grid">{filteredProducts.map((p) => { const Icon = p.icon; return <article className="product-card" key={p.id}><div className="product-visual"><Icon className="product-icon" />{p.tag && <span className="product-tag">{p.tag}</span>}<button className="favorite" aria-label={`افزودن ${p.name} به علاقه‌مندی‌ها`} onClick={(e) => e.currentTarget.classList.toggle('liked')}><FiHeart /></button></div><div className="product-info"><span className="product-category">{p.categoryName}</span><h3>{p.name}</h3><p className="product-description">{p.description}</p><div className="rating"><FiStar /> {p.rating.toLocaleString('fa-IR')} <small>(امتیاز کاربران)</small></div><div className="price-line"><strong>{formatPrice(p.price)}</strong><span>تومان</span></div><button className="add-button" onClick={() => addToCart(p)}>افزودن به سبد <FiPlus /></button></div></article>; })}</div> : <div className="empty-results"><FiSearch /><h3>محصولی پیدا نشد</h3><p>عبارت جستجو یا دسته‌بندی را تغییر دهید.</p><button onClick={() => { setQuery(''); setCategory('all'); }}>نمایش همه محصولات</button></div>}
-      </section>
-      <section className="benefits"><div><FiRefreshCw /><strong>ضمانت بازگشت کالا</strong><small>۷ روز ضمانت خرید</small></div><div><FiShield /><strong>پشتیبانی حرفه‌ای</strong><small>همیشه در کنار شما</small></div><div><FiTruck /><strong>ارسال سریع</strong><small>در کوتاه‌ترین زمان</small></div><div><FiCheckCircle /><strong>پرداخت امن</strong><small>با خیال راحت خرید کنید</small></div></section>
-    </main>
-    <footer id="footer"><div className="footer-brand"><span className="brand-mark"><FiBox /></span><div><strong>Nova Store</strong><p>فروشگاه محصولات دیجیتال</p></div></div><div className="footer-links"><strong>دسترسی سریع</strong><a href="#home">صفحه اصلی</a><a href="#products">محصولات</a><a href="#categories">دسته‌بندی‌ها</a></div><div className="footer-links"><strong>خدمات مشتریان</strong><a href="#footer">پیگیری سفارش</a><a href="#footer">سوالات متداول</a><a href="#footer">تماس با ما</a></div><div className="newsletter"><strong>عضویت در خبرنامه</strong><p>برای اطلاع از تخفیف‌ها ایمیل خود را وارد کنید.</p><form onSubmit={(e) => { e.preventDefault(); showNotice('عضویت شما ثبت شد (نمونه نمایشی)'); }}><input type="email" required placeholder="ایمیل شما" aria-label="ایمیل برای خبرنامه"/><button type="submit"><FiMail /> عضویت</button></form></div><div className="copyright">تمامی حقوق این وب‌سایت متعلق به نوا است. © ۱۴۰۵</div></footer>
-    {notice && <div className="toast" role="status"><FiCheckCircle /> {notice}</div>}
-    {cartOpen && <div className="modal-backdrop" onClick={() => setCartOpen(false)}><section className="cart-modal" role="dialog" aria-modal="true" aria-label="سبد خرید" onClick={(e) => e.stopPropagation()}><div className="modal-head"><h2>سبد خرید شما</h2><button onClick={() => setCartOpen(false)} aria-label="بستن"><FiX /></button></div>{cartCount === 0 ? <div className="empty-cart"><FiShoppingCart /><p>سبد خرید شما خالی است.</p><button onClick={() => setCartOpen(false)}>ادامه خرید</button></div> : <><div className="cart-items">{products.filter((p) => cart[p.id]).map((p) => { const Icon = p.icon; return <div className="cart-item" key={p.id}><span className="cart-item-icon"><Icon /></span><div className="cart-item-details"><strong>{p.name}</strong><small>{formatPrice(p.price)} تومان</small><div className="quantity-controls"><button onClick={() => updateQuantity(p.id, -1)} aria-label="کم کردن تعداد"><FiMinus /></button><span>{(cart[p.id] || 0).toLocaleString('fa-IR')}</span><button onClick={() => updateQuantity(p.id, 1)} aria-label="افزودن تعداد"><FiPlus /></button></div></div><strong className="line-price">{formatPrice(p.price * cart[p.id])} تومان</strong></div>; })}</div><div className="cart-total"><span>مجموع سبد خرید</span><strong>{formatPrice(cartTotal)} تومان</strong></div><button className="checkout-button" onClick={() => showNotice('مرحله پرداخت در نسخه نمایشی فعال نیست')}>ادامه و پرداخت</button></>}</section></div>}
-  </div>;
+.nova {
+  --bg: #f6f7fb;
+  --surface: #ffffff;
+  --text: #202238;
+  --muted: #777b90;
+  --border: #e8e9f1;
+  --primary: #635bdf;
+  --primary-soft: #eeedff;
+  --shadow: 0 8px 30px rgba(31, 35, 70, .06);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  transition: background .25s, color .25s;
 }
-createRoot(document.getElementById('root')).render(<App />);
+.nova.dark {
+  --bg: #151622;
+  --surface: #202131;
+  --text: #f3f3fa;
+  --muted: #a5a6b8;
+  --border: #343549;
+  --primary: #938bff;
+  --primary-soft: #302e4e;
+  --shadow: 0 8px 30px rgba(0,0,0,.16);
+}
+.nova button { border: 0; }
+.nova .container { max-width: 1200px; width: 92%; margin: auto; }
+
+.topbar {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; z-index: 10;
+}
+.topbar-inner {
+  height: 76px; display: flex; align-items: center;
+  justify-content: space-between; gap: 20px;
+}
+.brand { font-size: 25px; font-weight: 900; color: var(--primary); letter-spacing: -1px; }
+.brand span { color: var(--text); }
+.searchbox {
+  flex: 1; max-width: 460px; display: flex; align-items: center;
+  gap: 10px; background: var(--bg); border: 1px solid var(--border);
+  border-radius: 13px; padding: 0 14px; height: 44px;
+}
+.searchbox input {
+  width: 100%; outline: none; border: none; background: transparent; color: var(--text);
+}
+.actions { display: flex; gap: 10px; align-items: center; }
+.iconbtn {
+  width: 43px; height: 43px; border-radius: 13px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--bg); color: var(--text); position: relative;
+}
+.cart-count {
+  position: absolute; top: -5px; right: -5px; border-radius: 50%;
+  width: 19px; height: 19px; font-size: 11px; display: grid;
+  place-items: center; background: #ff647c; color: white;
+}
+.hero { padding: 32px 0 24px; }
+.hero-box {
+  border-radius: 24px; overflow: hidden; padding: 42px;
+  min-height: 260px; display: flex; align-items: center; justify-content: space-between;
+  background: linear-gradient(120deg, #6259dd, #9285fa);
+  color: white; position: relative;
+}
+.hero-copy { max-width: 540px; position: relative; z-index: 1; }
+.hero-copy small { opacity: .8; font-size: 13px; }
+.hero-copy h1 { font-size: clamp(25px, 4vw, 42px); line-height: 1.5; margin: 12px 0; }
+.hero-copy p { line-height: 2; color: #f1efff; font-size: 14px; }
+.hero-cta {
+  margin-top: 14px; border-radius: 11px; padding: 12px 20px;
+  background: white; color: #5e56d8; font-weight: bold;
+}
+.hero-art {
+  width: 230px; height: 230px; border-radius: 50%;
+  background: rgba(255,255,255,.13); display: grid; place-items: center;
+  font-size: 100px; flex-shrink: 0;
+}
+.features {
+  display: grid; grid-template-columns: repeat(3,1fr);
+  gap: 15px; margin: 15px 0 35px;
+}
+.feature {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 15px; padding: 17px; display: flex;
+  gap: 12px; align-items: center;
+}
+.feature-icon { color: var(--primary); font-size: 22px; }
+.feature strong { display: block; font-size: 14px; }
+.feature small { display: block; margin-top: 6px; color: var(--muted); font-size: 12px; }
+.section-head {
+  display: flex; justify-content: space-between; align-items: center;
+  gap: 15px; margin-bottom: 18px;
+}
+.section-head h2 { font-size: 22px; margin: 0; }
+.section-head p { font-size: 13px; color: var(--muted); margin-top: 8px; }
+.categories {
+  display: flex; gap: 9px; flex-wrap: wrap; margin: 20px 0;
+}
+.cat-btn {
+  border: 1px solid var(--border) !important; background: var(--surface);
+  color: var(--text); border-radius: 10px; padding: 10px 16px;
+  font-size: 13px; transition: .2s;
+}
+.cat-btn.active { background: var(--primary); color: white; border-color: var(--primary) !important; }
+.sort-select {
+  border: 1px solid var(--border); background: var(--surface);
+  color: var(--text); border-radius: 10px; padding: 10px;
+}
+.products {
+  display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 17px;
+}
+.product {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 18px; overflow: hidden; transition: transform .2s, box-shadow .2s;
+}
+.product:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
+.product-art {
+  height: 170px; display: grid; place-items: center; position: relative;
+}
+.product-icon { font-size: 65px; opacity: .85; }
+.product-badge {
+  position: absolute; top: 12px; right: 12px; border-radius: 7px;
+  padding: 5px 8px; font-size: 11px; background: var(--surface); color: var(--primary);
+}
+.product-info { padding: 15px; }
+.product-info h3 { font-size: 14px; margin: 0 0 9px; line-height: 1.8; }
+.description { font-size: 12px; color: var(--muted); line-height: 1.8; min-height: 42px; }
+.rating { color: #f5a623; font-size: 12px; margin: 8px 0; }
+.price { font-weight: bold; color: var(--primary); font-size: 14px; }
+.old-price { color: var(--muted); text-decoration: line-through; font-size: 11px; margin-top: 5px; }
+.product-bottom {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 13px;
+}
+.add-btn {
+  background: var(--primary); color: white; border-radius: 9px;
+  width: 38px; height: 38px; display: grid; place-items: center;
+}
+.empty {
+  grid-column: 1/-1; text-align: center; padding: 50px;
+  color: var(--muted); background: var(--surface); border-radius: 15px;
+}
+.footer {
+  margin-top: 50px; padding: 30px 0; text-align: center;
+  color: var(--muted); border-top: 1px solid var(--border); font-size: 12px;
+}
+.overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,.45);
+  z-index: 20; display: flex; justify-content: flex-end;
+}
+.cart-panel {
+  width: 420px; max-width: 100%; height: 100%;
+  background: var(--surface); padding: 22px; overflow-y: auto;
+  color: var(--text);
+}
+.cart-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:22px; }
+.cart-head h2 { margin:0; font-size:20px; }
+.cart-row { display:flex; gap:12px; padding:14px 0; border-bottom:1px solid var(--border); align-items:center; }
+.cart-row-icon { width:55px; height:55px; border-radius:12px; display:grid; place-items:center; font-size:25px; }
+.cart-row-info { flex:1; }
+.cart-row-info strong { font-size:13px; display:block; margin-bottom:8px; }
+.cart-row-info small { color:var(--muted); font-size:11px; }
+.qty-controls { display:flex; gap:8px; align-items:center; margin-top:10px; }
+.qty-controls button { width:25px; height:25px; background:var(--bg); color:var(--text); border-radius:7px; }
+.cart-total { padding-top:20px; font-weight:bold; display:flex; justify-content:space-between; }
+.checkout-btn { width:100%; padding:13px; border-radius:11px; background:var(--primary); color:white; margin-top:18px; font-weight:bold; }
+.cart-empty { text-align:center; color:var(--muted); padding:50px 0; }
+@media(max-width:950px) {
+  .products { grid-template-columns: repeat(3, minmax(0,1fr)); }
+  .hero-art { width:170px; height:170px; font-size:75px; }
+}
+@media(max-width:680px) {
+  .topbar-inner { height:auto; padding:12px 0; flex-wrap:wrap; }
+  .brand { font-size:21px; }
+  .searchbox { order:3; max-width:none; flex-basis:100%; }
+  .hero-box { padding:25px; min-height:220px; }
+  .hero-art { width:105px; height:105px; font-size:50px; }
+  .hero-copy h1 { font-size:25px; }
+  .hero-copy p { font-size:12px; }
+  .features { grid-template-columns:1fr; gap:10px; }
+  .products { grid-template-columns: repeat(2, minmax(0,1fr)); gap:10px; }
+  .product-art { height:130px; }
+  .product-icon { font-size:50px; }
+  .product-info { padding:11px; }
+  .product-info h3 { font-size:12px; }
+  .description { font-size:11px; }
+  .price { font-size:12px; }
+  .section-head { align-items:flex-start; flex-direction:column; }
+}
+@media(max-width:360px) {
+  .products { grid-template-columns:1fr; }
+}
+`;
+
+// ==============================
+// برنامه اصلی
+// ==============================
+function App() {
+  const [dark, setDark] = useState(
+    localStorage.getItem("nova-theme") === "dark"
+  );
+
+  const [search, setSearch] = useState("");
+  const [category, setCategory] = useState("all");
+  const [sort, setSort] = useState("default");
+  const [cartOpen, setCartOpen] = useState(false);
+  const [cart, setCart] = useState(() => {
+  try {
+    const savedCart = JSON.parse(localStorage.getItem("nova-cart"));
+
+    // بررسی اینکه اطلاعات سبد خرید حتماً آرایه باشد
+    return Array.isArray(savedCart) ? savedCart : [];
+  } catch (error) {
+    return [];
+  }
+});
+
+  // ذخیره تم انتخابی
+  useEffect(() => {
+    localStorage.setItem("nova-theme", dark ? "dark" : "light");
+  }, [dark]);
+
+  // ذخیره سبد خرید
+  useEffect(() => {
+    localStorage.setItem("nova-cart", JSON.stringify(cart));
+  }, [cart]);
+
+  // فیلتر و مرتب‌سازی محصولات
+  const filteredProducts = products
+    .filter((p) => category === "all" || p.category === category)
+    .filter((p) => p.name.toLowerCase().includes(search.trim().toLowerCase()))
+    .sort((a, b) => {
+      if (sort === "cheap") return a.price - b.price;
+      if (sort === "expensive") return b.price - a.price;
+      return a.id - b.id;
+    });
+
+  // افزودن محصول به سبد
+  function addToCart(product) {
+    setCart((prev) => {
+      const found = prev.find((item) => item.id === product.id);
+      if (found) {
+        return prev.map((item) =>
+          item.id === product.id
+            ? { ...item, quantity: item.quantity + 1 }
+            : item
+        );
+      }
+      return [...prev, { ...product, quantity: 1 }];
+    });
+  }
+
+  // تغییر تعداد محصول در سبد
+  function changeQuantity(id, amount) {
+    setCart((prev) =>
+      prev
+        .map((item) =>
+          item.id === id
+            ? { ...item, quantity: item.quantity + amount }
+            : item
+        )
+        .filter((item) => item.quantity > 0)
+    );
+  }
+
+  // حذف محصول
+  function removeFromCart(id) {
+    setCart((prev) => prev.filter((item) => item.id !== id));
+  }
+
+  const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+  const totalPrice = cart.reduce(
+    (sum, item) => sum + item.price * item.quantity,
+    0
+  );
+
+  const categories = [
+    { id: "all", label: "همه محصولات" },
+    { id: "audio", label: "صوتی" },
+    { id: "gaming", label: "گیمینگ" },
+    { id: "accessories", label: "لوازم جانبی" },
+    { id: "digital", label: "دیجیتال" },
+  ];
+
+  return (
+    <>
+      <style>{css}</style>
+
+      <div className={`nova ${dark ? "dark" : ""}`} dir="rtl">
+        {/* نوار بالای سایت */}
+        <header className="topbar">
+          <div className="container topbar-inner">
+            <div className="brand">
+              NOVA <span>STORE</span>
+            </div>
+
+            <div className="searchbox">
+              <FaSearch />
+              <input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="جستجوی محصولات..."
+              />
+              {search && (
+                <button onClick={() => setSearch("")} aria-label="پاک کردن">
+                  <FaTimes />
+                </button>
+              )}
+            </div>
+
+            <div className="actions">
+              <button
+                className="iconbtn"
+                onClick={() => setDark(!dark)}
+                title="تغییر تم"
+              >
+                {dark ? <FaSun /> : <FaMoon />}
+              </button>
+
+              <button
+                className="iconbtn"
+                onClick={() => setCartOpen(true)}
+                title="سبد خرید"
+              >
+                <FaShoppingCart />
+                {totalItems > 0 && (
+                  <span className="cart-count">{totalItems}</span>
+                )}
+              </button>
+            </div>
+          </div>
+        </header>
+
+        <main className="container">
+          {/* بنر اصلی */}
+          <section className="hero">
+            <div className="hero-box">
+              <div className="hero-copy">
+                <small>تجربه خرید متفاوت</small>
+                <h1>دنیای تکنولوژی، یک قدم جلوتر</h1>
+                <p>
+                  محصولات دیجیتال باکیفیت، قیمت مناسب و تجربه خرید آسان در نوا استور.
+                </p>
+                <button
+                  className="hero-cta"
+                  onClick={() =>
+                    document
+                      .getElementById("products-section")
+                      ?.scrollIntoView({ behavior: "smooth" })
+                  }
+                >
+                  مشاهده محصولات <FaArrowLeft style={{ marginRight: 8 }} />
+                </button>
+              </div>
+              <div className="hero-art">
+                <FaHeadphones />
+              </div>
+            </div>
+          </section>
+
+          {/* مزیت‌های فروشگاه */}
+          <section className="features">
+            <div className="feature">
+              <FaTruck className="feature-icon" />
+              <div>
+                <strong>ارسال سریع</strong>
+                <small>تحویل مطمئن سفارش‌ها</small>
+              </div>
+            </div>
+            <div className="feature">
+              <FaShieldAlt className="feature-icon" />
+              <div>
+                <strong>خرید مطمئن</strong>
+                <small>تجربه خرید امن و آسان</small>
+              </div>
+            </div>
+            <div className="feature">
+              <FaBolt className="feature-icon" />
+              <div>
+                <strong>محصولات متنوع</strong>
+                <small>انتخابی برای هر سلیقه</small>
+              </div>
+            </div>
+          </section>
+
+          {/* فهرست محصولات */}
+          <section id="products-section">
+            <div className="section-head">
+              <div>
+                <h2>محصولات فروشگاه</h2>
+                <p>محصول مورد نظرت را پیدا کن و به سبد خرید اضافه کن.</p>
+              </div>
+
+              <select
+                className="sort-select"
+                value={sort}
+                onChange={(e) => setSort(e.target.value)}
+              >
+                <option value="default">مرتب‌سازی پیش‌فرض</option>
+                <option value="cheap">ارزان‌ترین</option>
+                <option value="expensive">گران‌ترین</option>
+              </select>
+            </div>
+
+            <div className="categories">
+              {categories.map((cat) => (
+                <button
+                  key={cat.id}
+                  className={`cat-btn ${category === cat.id ? "active" : ""}`}
+                  onClick={() => setCategory(cat.id)}
+                >
+                  {cat.label}
+                </button>
+              ))}
+            </div>
+
+            <div className="products">
+              {filteredProducts.length === 0 ? (
+                <div className="empty">
+                  محصولی با این مشخصات پیدا نشد.
+                </div>
+              ) : (
+                filteredProducts.map((product) => {
+                  const ProductIcon = iconMap[product.icon] || FaMobileAlt;
+
+                  return (
+                    <article className="product" key={product.id}>
+                      <div
+                        className="product-art"
+                        style={{ background: product.color }}
+                      >
+                        {product.badge && (
+                          <span className="product-badge">{product.badge}</span>
+                        )}
+                        <ProductIcon className="product-icon" />
+                      </div>
+
+                      <div className="product-info">
+                        <h3>{product.name}</h3>
+                        <div className="description">{product.description}</div>
+
+                        <div className="rating">
+                          <FaStar /> {product.rating}
+                        </div>
+
+                        <div className="product-bottom">
+                          <div>
+                            <div className="price">
+                              {formatPrice(product.price)}
+                            </div>
+                            {product.oldPrice && (
+                              <div className="old-price">
+                                {formatPrice(product.oldPrice)}
+                              </div>
+                            )}
+                          </div>
+
+                          <button
+                            className="add-btn"
+                            onClick={() => addToCart(product)}
+                            title="افزودن به سبد خرید"
+                          >
+                            <FaPlus />
+                          </button>
+                        </div>
+                      </div>
+                    </article>
+                  );
+                })
+              )}
+            </div>
+          </section>
+
+          {/* پایین صفحه */}
+          <footer className="footer">
+            © {new Date().getFullYear()} Nova Store — تجربه‌ای نو در خرید دیجیتال
+          </footer>
+        </main>
+
+        {/* پنل سبد خرید */}
+        {cartOpen && (
+          <div className="overlay" onClick={() => setCartOpen(false)}>
+            <div className="cart-panel" onClick={(e) => e.stopPropagation()}>
+              <div className="cart-head">
+                <h2>سبد خرید شما</h2>
+                <button
+                  className="iconbtn"
+                  onClick={() => setCartOpen(false)}
+                  aria-label="بستن"
+                >
+                  <FaTimes />
+                </button>
+              </div>
+
+              {cart.length === 0 ? (
+                <div className="cart-empty">
+                  <FaShoppingCart size={40} />
+                  <p>سبد خرید شما خالی است.</p>
+                </div>
+              ) : (
+                <>
+                  {cart.map((item) => {
+                    const ItemIcon = iconMap[item.icon] || FaMobileAlt;
+
+                    return (
+                      <div className="cart-row" key={item.id}>
+                        <div
+                          className="cart-row-icon"
+                          style={{ background: item.color }}
+                        >
+                          <ItemIcon />
+                        </div>
+
+                        <div className="cart-row-info">
+                          <strong>{item.name}</strong>
+                          <small>{formatPrice(item.price)}</small>
+
+                          <div className="qty-controls">
+                            <button onClick={() => changeQuantity(item.id, 1)}>
+                              <FaPlus />
+                            </button>
+                            <span>{item.quantity}</span>
+                            <button onClick={() => changeQuantity(item.id, -1)}>
+                              <FaMinus />
+                            </button>
+                            <button
+                              onClick={() => removeFromCart(item.id)}
+                              title="حذف"
+                              style={{ color: "#e45b6b", marginRight: 5 }}
+                            >
+                              <FaTrash />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+
+                  <div className="cart-total">
+                    <span>مجموع خرید</span>
+                    <span>{formatPrice(totalPrice)}</span>
+                  </div>
+
+                  <button
+                    className="checkout-btn"
+                    onClick={() =>
+                      alert("سبد خرید آماده است. در نسخه بعدی پرداخت را اضافه می‌کنیم.")
+                    }
+                  >
+                    ادامه خرید
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+    </>
+  );
+}
+
+createRoot(document.getElementById("root")).render(<App />);

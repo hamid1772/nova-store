@@ -1,9 +1,11 @@
+
 {
   "name": "nova-store",
   "version": "1.0.0",
   "private": true,
   "type": "module",
   "scripts": {
+    "start": "vite",
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview"
@@ -15,6 +17,6 @@
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.3.1",
-    "vite": "^5.4.10"
+    "vite": "^5.4.21"
   }
 }
