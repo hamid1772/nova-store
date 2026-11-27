@@ -2,12 +2,13 @@ import React, { useMemo, useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import {
   FiSearch, FiX, FiShoppingCart, FiHeart, FiGrid, FiMusic, FiMousePointer,
-  FiHardDrive, FiCamera, FiGamepad, FiMonitor, FiHeadphones, FiVolume2,
-  FiKeyboard, FiVideo, FiSmartphone, FiSun, FiMoon,
+  FiHardDrive, FiCamera, FiPlay, FiMonitor, FiHeadphones, FiVolume2,
+  FiVideo, FiSmartphone, FiSun, FiMoon,
   FiArrowLeft, FiArrowRight, FiPlus, FiMinus, FiStar, FiShield, FiTruck,
   FiRefreshCw, FiCheckCircle, FiMail, FiUser, FiBox
 } from 'react-icons/fi';
 import './styles.css';
+import { MdKeyboard } from 'react-icons/md';
 
 
 // محصولات نمونه فروشگاه؛ برای افزودن محصول، یک مورد به این آرایه اضافه کنید.
@@ -15,21 +16,21 @@ const products = [
   { id: 1, name: 'هدفون بی‌سیم', category: 'audio', categoryName: 'صوتی', price: 1850000, icon: FiHeadphones, description: 'صدای شفاف و باتری قدرتمند', tag: 'پرفروش', rating: 4.8 },
   { id: 2, name: 'اسپیکر بلوتوثی', category: 'audio', categoryName: 'صوتی', price: 1250000, icon: FiVolume2, description: 'صدای پرقدرت در ابعاد کوچک', tag: 'جدید', rating: 4.7 },
   { id: 3, name: 'ماوس بی‌سیم', category: 'accessory', categoryName: 'لوازم جانبی', price: 650000, icon: FiMousePointer, description: 'طراحی ارگونومیک و دقیق', tag: 'پیشنهاد', rating: 4.6 },
-  { id: 4, name: 'کیبورد مکانیکی', category: 'accessory', categoryName: 'لوازم جانبی', price: 2100000, icon: FiKeyboard, description: 'کلیدهای نرم و نورپردازی جذاب', tag: 'ویژه', rating: 4.6 },
+  { id: 4, name: 'کیبورد مکانیکی', category: 'accessory', categoryName: 'لوازم جانبی', price: 2100000, icon: MdKeyboard, description: 'کلیدهای نرم و نورپردازی جذاب', tag: 'ویژه', rating: 4.6 },
   { id: 5, name: 'فلش USB', category: 'storage', categoryName: 'ذخیره‌سازی', price: 390000, icon: FiHardDrive, description: 'حافظه قابل حمل برای فایل‌ها', tag: '', rating: 4.5 },
   { id: 6, name: 'وب‌کم HD', category: 'camera', categoryName: 'تصویری', price: 990000, icon: FiVideo, description: 'تصویر واضح برای جلسات آنلاین', tag: 'محبوب', rating: 4.4 },
-  { id: 7, name: 'گیم‌پد', category: 'gaming', categoryName: 'گیمینگ', price: 1450000, icon: FiGamepad, description: 'کنترل راحت برای بازی‌های روز', tag: '', rating: 4.7 },
+  { id: 7, name: 'گیم‌پد', category: 'gaming', categoryName: 'گیمینگ', price: 1450000, icon: FiPlay, description: 'کنترل راحت برای بازی‌های روز', tag: '', rating: 4.7 },
   { id: 8, name: 'پایه لپ‌تاپ', category: 'accessory', categoryName: 'لوازم جانبی', price: 720000, icon: FiMonitor, description: 'بهبود زاویه دید و گردش هوا', tag: '', rating: 4.3 },
 ];
 const categories = [
   { id: 'all', name: 'همه محصولات', icon: FiGrid }, { id: 'audio', name: 'صوتی', icon: FiMusic },
   { id: 'accessory', name: 'لوازم جانبی', icon: FiMousePointer }, { id: 'storage', name: 'ذخیره‌سازی', icon: FiHardDrive },
-  { id: 'camera', name: 'تصویری', icon: FiCamera }, { id: 'gaming', name: 'گیمینگ', icon: FiGamepad },
+  { id: 'camera', name: 'تصویری', icon: FiCamera }, { id: 'gaming', name: 'گیمینگ', icon: FiPlay },
 ];
 const banners = [
   { eyebrow: 'انتخاب هوشمندانه، خرید آسان', title: <>تکنولوژی، همیشه<br />در دسترس شما!</>, subtitle: 'محصولات منتخب دیجیتال با کیفیت و قیمت مناسب', action: 'مشاهده محصولات', style: 'banner-purple', art: [FiMonitor, FiSmartphone, FiHeadphones] },
   { eyebrow: 'تجربه‌ای متفاوت از صدا', title: <>صدایی واضح؛<br />لحظاتی ماندگار</>, subtitle: 'هدفون و اسپیکرهای منتخب برای موسیقی و سرگرمی', action: 'محصولات صوتی', style: 'banner-blue', art: [FiHeadphones, FiVolume2, FiMusic] },
-  { eyebrow: 'لوازم جانبی کاربردی', title: <>همه‌چیز برای<br />فضای کار بهتر</>, subtitle: 'ابزارهای کاربردی برای میز کار و استفاده روزمره', action: 'دیدن لوازم جانبی', style: 'banner-orange', art: [FiKeyboard, FiMousePointer, FiHardDrive] },
+  { eyebrow: 'لوازم جانبی کاربردی', title: <>همه‌چیز برای<br />فضای کار بهتر</>, subtitle: 'ابزارهای کاربردی برای میز کار و استفاده روزمره', action: 'دیدن لوازم جانبی', style: 'banner-orange', art: [FiCommand, FiMousePointer, FiHardDrive] },
 ];
 const formatPrice = (price) => new Intl.NumberFormat('fa-IR').format(price);
 
